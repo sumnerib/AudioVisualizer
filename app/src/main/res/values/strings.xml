@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Audio Visualizer</string>
+    <string name="lpf">LPF</string>
+    <string name="hpf">HPF</string>
+    <string name="h_shelf">H-Shelf</string>
+    <string name="l_shelf">L-Shelf</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="stop">Stop</string>
+</resources>

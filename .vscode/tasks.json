@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "echoCommand": true,
+    "command": "./gradlew",
+    "presentation": {
+      "echo": true,
+      "reveal": "always",
+      "focus": false,
+      "panel": "shared"
+    },
+    "tasks": [
+      {
+        "label": "compileJava",
+        "type": "shell"
+      },
+      {
+        "label": "test",
+        "type": "shell",
+        "group": {
+          "kind": "test",
+          "isDefault": true
+        }
+      },
+      {
+        "label": "clean",
+        "type": "shell"
+      },
+      {
+        "label": "build",
+        "type": "shell",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      }
+    ]
+  }

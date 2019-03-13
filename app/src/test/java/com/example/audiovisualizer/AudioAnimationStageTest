@@ -1,0 +1,13 @@
+package com.example.audiovisualizer;
+
+import masteringVisualizations.AudioAnimationStage;
+
+import org.junit.Test;
+import org.junit.Assert.*;
+import visual.statik.described.Content;
+
+
+public class AudioAnimationStageTest {
+
+   Content expected = AudioAnimationStage.createThinBar() 
+}
