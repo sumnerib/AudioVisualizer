@@ -10,14 +10,14 @@ import visual.AffineTransform
 
 class Content(shape: Shape?, color: Color?, paint: Paint?) : AbstractTransformableContent(), TransformableContent {
 
-    lateinit var transformedShape: Shape
+    var transformedShape: Shape? = null
     var originalShape: Shape? = null
     lateinit var transformedBounds: Rect
     lateinit var originalBounds: Rect
 
     init { setShape(shape) }
 
-    constructor: this(null, null, null)
+    constructor(): this(null, null, null)
 
     override fun getBounds2D(ofTransformed: Boolean): Rect {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -47,6 +47,8 @@ class Content(shape: Shape?, color: Color?, paint: Paint?) : AbstractTransformab
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    private fun createTransformedContent() = createTransformedContent(getAffineTransform())
+
     private fun createTransformedContent(transform: AffineTransform) {
 
         transformedShape = transform.createTransformedShape(originalShape)
@@ -54,7 +56,7 @@ class Content(shape: Shape?, color: Color?, paint: Paint?) : AbstractTransformab
         this.getBoundsFor(transformedBounds, transformedShape)
     }
 
-    private fun getBoundsFor(rect: Rect, shape: Shape) {
+    private fun getBoundsFor(rect: Rect, shape: Shape?) {
 
         var drawable = ShapeDrawable(shape)
         var rect2 = drawable.bounds
@@ -65,11 +67,15 @@ class Content(shape: Shape?, color: Color?, paint: Paint?) : AbstractTransformab
     }
 
     fun setShape(shape: Shape?) {
+        
         originalShape = shape
         transformedBounds = Rect()
         originalBounds = Rect()
-        if (originalShape != null) {
-            this.transformationRequired ? createTransformedContent
-        }
+        
+        if (originalShape != null) 
+            if (isTransformationRequired()) createTransformedContent() else transformedShape = shape
+
+        getBoundsFor(originalBounds, originalShape)
+        getBoundsFor(transformedBounds, transformedShape)
     }
 }

@@ -1,12 +1,5 @@
 package masteringVisualizations;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-
 import net.beadsproject.beads.core.AudioContext;
 import visual.VisualizationView;
 import visual.dynamic.described.Stage;

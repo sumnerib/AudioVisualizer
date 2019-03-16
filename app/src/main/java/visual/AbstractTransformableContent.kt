@@ -19,10 +19,19 @@ abstract class AbstractTransformableContent : TransformableContent {
 
     fun getBounds2D(): Rect = getBounds2D(true)
 
-    protected fun getAffineTransform() {
+    protected fun getAffineTransform(): AffineTransform {
 
-        var
-        var transform = 
+        var transform = AffineTransform()
+        if (rerotated) 
+            transform.preConcat(AffineTransform.getRotateInstance(angle, xRotation, yRotation)) 
+
+        if (rescaled) 
+            transform.preConcat(AffineTransform.getScaleInstance(xScale, yScale))
+
+        if (relocated)
+            transform.preConcat(AffineTransform.getTranslateInstance(x, y))
+
+        return transform
     }
 
     protected fun isTransformationRequired() = rerotated || relocated || rescaled

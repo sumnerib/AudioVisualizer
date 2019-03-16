@@ -1,14 +1,9 @@
 package masteringVisualizations;
 
-import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import java.util.Arrays;
 
-import android.graphics.Paint;
 import net.beadsproject.beads.analysis.featureextractors.FFT;
 import net.beadsproject.beads.analysis.featureextractors.PowerSpectrum;
 import net.beadsproject.beads.analysis.segmenters.ShortFrameSegmenter;
@@ -296,8 +291,8 @@ public class AudioAnimationStage extends Stage
    * 
    * @return a rectangle representing the view background
    */
-	private Rectangle2D.Float createBackground() {
-		return new Rectangle2D.Float(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+	private Rect createBackground() {
+		return new Rect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
 	}
 	
 	/**
