@@ -2,13 +2,11 @@ package masteringVisualizations;
 
 import android.graphics.Paint;
 import android.graphics.Rect;
-import java.util.Arrays;
 
 import net.beadsproject.beads.analysis.featureextractors.FFT;
 import net.beadsproject.beads.analysis.featureextractors.PowerSpectrum;
 import net.beadsproject.beads.analysis.segmenters.ShortFrameSegmenter;
 import net.beadsproject.beads.core.AudioContext;
-import visual.dynamic.described.Stage;
 import visual.statik.described.Content;
 
 
@@ -19,8 +17,7 @@ import visual.statik.described.Content;
  * @version V2 7.23.18
  *
  */
-public class AudioAnimationStage extends Stage  
-{
+public class AudioAnimationStage  {
 	
 	public static int VIEW_WIDTH;
 	public static int VIEW_HEIGHT;
