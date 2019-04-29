@@ -7,8 +7,9 @@ import android.graphics.drawable.shapes.Shape
 import android.graphics.drawable.ShapeDrawable
 import visual.AbstractTransformableContent
 import visual.AffineTransform
+import android.graphics.Canvas
 
-class Content(shape: Shape?, color: Color?, paint: Paint?) : AbstractTransformableContent(), TransformableContent {
+class Content(shape: Shape?, var color: Color?, var paint: Paint?) : AbstractTransformableContent(), TransformableContent {
 
     var transformedShape: Shape? = null
     var originalShape: Shape? = null
@@ -19,9 +20,7 @@ class Content(shape: Shape?, color: Color?, paint: Paint?) : AbstractTransformab
 
     constructor(): this(null, null, null)
 
-    override fun getBounds2D(ofTransformed: Boolean): Rect {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getBounds2D(transformed: Boolean): Rect = if (transformed) transformedBounds else originalBounds 
 
     override fun setLocation(x: Double, y: Double) {
         super.setLocation(x, y)
@@ -35,17 +34,19 @@ class Content(shape: Shape?, color: Color?, paint: Paint?) : AbstractTransformab
         super.setScale(xScale, yScale)
     }
 
-    override fun render() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun render(canvas: Canvas) {
+
+        if (isTransformationRequired()) createTransformedContent()
+
+        if (transformedShape != null) {
+            paint?.color = color?.toArgb() ?: Color.BLACK
+            (transformedShape as Shape).draw(canvas, paint)
+        }
     }
 
-    override fun setColor(color: Color) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun setColor(color: Color) { }
 
-    override fun setPaint(paint: Paint) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun setPaint(paint: Paint) { }
 
     private fun createTransformedContent() = createTransformedContent(getAffineTransform())
 

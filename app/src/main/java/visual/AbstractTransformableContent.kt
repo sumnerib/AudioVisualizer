@@ -15,7 +15,7 @@ abstract class AbstractTransformableContent : TransformableContent {
     protected var rerotated = false
     protected var rescaled = false
 
-    override abstract fun getBounds2D(ofTransformed: Boolean): Rect
+    override abstract fun getBounds2D(transformed: Boolean): Rect
 
     fun getBounds2D(): Rect = getBounds2D(true)
 
