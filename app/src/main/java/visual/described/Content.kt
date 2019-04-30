@@ -9,7 +9,7 @@ import visual.AbstractTransformableContent
 import visual.AffineTransform
 import android.graphics.Canvas
 
-class Content(shape: Shape?, var color: Color?, var paint: Paint?) : AbstractTransformableContent(), TransformableContent {
+class Content(shape: Shape?, private var color: Color?, private var paint: Paint?) : AbstractTransformableContent(), TransformableContent {
 
     var transformedShape: Shape? = null
     var originalShape: Shape? = null

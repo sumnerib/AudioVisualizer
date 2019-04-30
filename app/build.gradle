@@ -30,7 +30,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation files('libs/multimedia.jar')
     implementation files('libs/JTransforms-3.1-with-dependencies.jar')
     implementation files('libs/jarjar-1.0.jar')
     implementation files('libs/jl1.0.1.jar')

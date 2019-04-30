@@ -8,9 +8,9 @@ import android.graphics.drawable.shapes.PathShape
 class AffineTransform: Matrix() {
 
     init {
-       this.setValues(floatArrayOf(1f, 0f, 0f,
-                                   0f, 1f, 0f,
-                                   0f, 0f, 1f))
+    this.setValues(floatArrayOf(1f, 0f, 0f,
+                                0f, 1f, 0f,
+                                0f, 0f, 1f))
     }
 
     companion object {
