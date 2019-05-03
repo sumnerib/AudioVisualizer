@@ -4,7 +4,7 @@ import event.MetronomeListener
 import event.Metronome
 import visual.Visualization
 
-class Stage(timeStep: Int, metronome: Metronome) : Visualization(), MetronomeListener {
+open class Stage(timeStep: Int, metronome: Metronome) : Visualization(), MetronomeListener {
 
     private var shouldRestart = false
     private var timeStep = timeStep
@@ -13,6 +13,8 @@ class Stage(timeStep: Int, metronome: Metronome) : Visualization(), MetronomeLis
         private set
 
     init { metronome.addListener(this) }
+
+    constructor(timeStep: Int): this(timeStep, Metronome(timeStep))
 
     fun add(sprite: Sprite) {
         metronome.addListener(sprite)
