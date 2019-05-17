@@ -6,31 +6,30 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-    <FrameLayout
-            android:id="@+id/visualization"
-            android:layout_width="match_parent"
-            android:layout_height="275dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:background="@color/black">
+        <FrameLayout
+                android:id="@+id/visualization"
+                android:layout_width="match_parent"
+                android:layout_height="275dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:background="@color/black">
+                <Spinner
+                        android:id="@+id/viz_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/visualization"
+                />
+        </FrameLayout>
 
-    </FrameLayout>
-
-    <Spinner
-            android:id="@+id/viz_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/visualization"/>
-
-    <RelativeLayout
-            android:id="@+id/eq_panel"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@id/viz_spinner"
-            android:background="@color/gold" android:layout_marginLeft="0dp" android:layout_marginTop="0dp">
+        <RelativeLayout
+                android:id="@+id/eq_panel"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/viz_spinner"
+                android:background="@color/gold" android:layout_marginLeft="0dp" android:layout_marginTop="0dp">
 
         <android.support.v7.widget.AppCompatSeekBar
                 android:id="@+id/two_fifty_hz"
@@ -84,59 +83,59 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true">
 
-            <Button
-                    android:id="@+id/lpf_button"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/lpf"/>
+                <Button
+                        android:id="@+id/lpf_button"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lpf"/>
 
-            <Spinner
-                    android:id="@+id/lpf_spinner"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/lpf_button"
-                    android:layout_toEndOf="@id/lpf_button"
-                    android:layout_marginTop="5dp"/>
+                <Spinner
+                        android:id="@+id/lpf_spinner"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/lpf_button"
+                        android:layout_toEndOf="@id/lpf_button"
+                        android:layout_marginTop="5dp"/>
 
-            <Button
-                    android:id="@+id/hpf_button"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/lpf_button"
-                    android:text="@string/hpf"/>
+                <Button
+                        android:id="@+id/hpf_button"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/lpf_button"
+                        android:text="@string/hpf"/>
 
-            <Spinner
-                    android:id="@+id/hpf_spinner"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/hpf_button"
-                    android:layout_toEndOf="@id/hpf_button"
-                    android:layout_below="@+id/lpf_spinner"
-                    android:layout_marginTop="25dp"/>
+                <Spinner
+                        android:id="@+id/hpf_spinner"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/hpf_button"
+                        android:layout_toEndOf="@id/hpf_button"
+                        android:layout_below="@+id/lpf_spinner"
+                        android:layout_marginTop="25dp"/>
 
-            <Button
-                    android:id="@+id/l_shelf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/l_shelf"
-                    android:layout_below="@id/hpf_button"/>
+                <Button
+                        android:id="@+id/l_shelf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/l_shelf"
+                        android:layout_below="@id/hpf_button"/>
 
-            <Button
-                    android:id="@+id/h_shelf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/h_shelf"
-                    android:layout_below="@id/l_shelf"/>
+                <Button
+                        android:id="@+id/h_shelf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/h_shelf"
+                        android:layout_below="@id/l_shelf"/>
         </RelativeLayout>
 
-    </RelativeLayout>
+        </RelativeLayout>
 
-    <RelativeLayout
-            android:id="@+id/control_panel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/eq_panel"
-            android:background="@color/colorPrimary">
+        <RelativeLayout
+                android:id="@+id/control_panel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/eq_panel"
+                android:background="@color/colorPrimary">
 
         <Spinner
                 android:id="@+id/song_selector"
@@ -181,6 +180,5 @@
                 android:layout_marginLeft="18dp"
                 android:layout_marginStart="18dp"
                 android:layout_marginTop="15dp"/>
-
-    </RelativeLayout>
+        </RelativeLayout>
 </RelativeLayout>

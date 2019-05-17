@@ -26,12 +26,12 @@ class AudioAnimationStage(ac: AudioContext, arg0: Int, val width: Int,
 				val height: Int, animationType:Int) : Stage(arg0) {
 					
 	private val ps: PowerSpectrum
-	private val ac: AudioContext
+	var ac: AudioContext
 	var animationType: Int = 0
 
 	init{
-		this.animationType = animationType
 		this.ac = ac
+		this.animationType = animationType
 		val sfs = ShortFrameSegmenter(ac)
 		sfs.addInput(ac.out)
 		sfs.setChunkSize(2048)
