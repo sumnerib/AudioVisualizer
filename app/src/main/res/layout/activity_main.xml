@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <FrameLayout
+        <com.masteringVisualizations.FrequencyVizLayout
                 android:id="@+id/visualization"
                 android:layout_width="match_parent"
                 android:layout_height="275dp"
@@ -20,16 +20,18 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/visualization"
                 />
-        </FrameLayout>
+        </com.masteringVisualizations.FrequencyVizLayout>
 
         <RelativeLayout
                 android:id="@+id/eq_panel"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
+                android:layout_below="@+id/visualization"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@id/viz_spinner"
-                android:background="@color/gold" android:layout_marginLeft="0dp" android:layout_marginTop="0dp">
+                android:background="@color/gold"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp">
 
         <android.support.v7.widget.AppCompatSeekBar
                 android:id="@+id/two_fifty_hz"
