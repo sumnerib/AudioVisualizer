@@ -1,99 +1,36 @@
 package masteringVisualizations
 
-import java.awt.Color
-import java.awt.Font
-import java.awt.Image
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
-import java.io.BufferedInputStream
-import java.io.File
+import android.content.Context
+import android.graphics.Color
+import android.util.AttributeSet
+import android.widget.RelativeLayout
 import java.io.IOException
-import java.io.InputStream
-import java.net.URL
 
-import javax.sound.sampled.AudioSystem
-import javax.sound.sampled.Control
-import javax.sound.sampled.FloatControl
-import javax.sound.sampled.Line
-import javax.sound.sampled.LineEvent
-import javax.sound.sampled.LineListener
-import javax.sound.sampled.LineUnavailableException
-import javax.sound.sampled.Mixer.Info
-import javax.sound.sampled.UnsupportedAudioFileException
-import javax.swing.AbstractButton
-import javax.swing.ButtonModel
-import javax.swing.Icon
-import javax.swing.ImageIcon
-import javax.swing.JButton
-import javax.swing.JComboBox
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.JProgressBar
-import javax.swing.JSlider
-import javax.swing.JSpinner
-import javax.swing.JToggleButton
-import javax.swing.SpinnerNumberModel
-import javax.swing.SwingConstants
-import javax.swing.SwingUtilities
-import javax.swing.SwingWorker
-import javax.swing.UIManager
-import javax.swing.border.LineBorder
-import javax.swing.event.ChangeEvent
-import javax.swing.event.ChangeListener
-
-import org.jaudiolibs.audioservers.javasound.JavasoundAudioServer
-import org.jaudiolibs.beads.AudioServerIO
-
-import visual.statik.sampled.ImageFactory
 import io.ResourceFinder
 import net.beadsproject.beads.analysis.featureextractors.Power
-import net.beadsproject.beads.analysis.segmenters.ShortFrameSegmenter
 import net.beadsproject.beads.core.AudioContext
 import net.beadsproject.beads.data.Sample
-import net.beadsproject.beads.data.SampleManager
-import net.beadsproject.beads.ugens.Clip
 import net.beadsproject.beads.ugens.Gain
-import net.beadsproject.beads.ugens.Glide
-import net.beadsproject.beads.ugens.OnePoleFilter
 import net.beadsproject.beads.ugens.RMS
 import net.beadsproject.beads.ugens.SamplePlayer
 
 /**
  * The AudioControlPanel builds the controls panel for audio playback and
  * volume control and meter of the audio signal.
- * @author Joey Arbogast
+ * @author Joey Arbogast revised 2019 by Isaac Sumner
+ * @version 6.4.19
  */
 
-class AudioControlPanel
-/**
- * This constructor creates the audio control panel and adds the components to it.
- * @param width        JPanel width
- * @param max_height    JPanel maxium height
- * @param height    Jpanel Height
- */
-    (
-    private val WIDTH: Int                //Width dimension of the panel
-    , private val MAX_HEIGHT: Int, private val HEIGHT: Int                //Height dimension of the panel
-) : JPanel(), ActionListener, ChangeListener {
+class AudioControlPanel@JvmOverloads constructor(context: Context, attrs: AttributeSet? = null,
+                             defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr) {
+
     private val finder: ResourceFinder    //A resource finder for getting audio files and images
 
-    //Color and fonts used in the application
-    private val jmuPurple = Color(69, 0, 132)
-    private val jmuGold = Color(203, 182, 119)
-    private val font: Font
-    private val fontVolume: Font
-    private val title: Font
-
+    //Colors used in the application
+    private val jmuPurple = Color.argb(255, 69, 0, 132)
+    private val jmuGold = Color.argb(255, 203, 182, 119)
     private val currVol: Int = 0
     private val prevVol: Int = 0    //
-
-    //These are all the JComponents used for audio control
-    private val volumeSlider: JSlider
-    private val volume: JProgressBar
-    private val files: JComboBox<String>
-    private val playbutton: JToggleButton
-    private val pausebutton: JToggleButton
-    private val stopbutton: JToggleButton
 
     //These are from the Beads library
     /**
@@ -116,103 +53,10 @@ class AudioControlPanel
     private var thread: Thread? = null
 
     init {
-
-        //Create the fonts
-        font = Font("Times New Roman", Font.BOLD, (WIDTH * 0.03).toInt())
-        fontVolume = Font("Times New Roman", Font.BOLD, (WIDTH * 0.03).toInt())
-        title = Font("Times New Roman", Font.BOLD, (WIDTH * 0.03).toInt())
-
-        //Set the layout, bounds and background color of the JPanel
-        setLayout(null)
-        setBounds(0, 0, WIDTH, HEIGHT)
-        setBackground(jmuPurple)
-
+        setBackgroundColor(jmuPurple)
         //Get a resource finder instance and load the images for the play, pause and stop buttons
         finder = ResourceFinder.createInstance(this)
-        val imgFactory = ImageFactory(finder)
-        val pIcon = imgFactory.createBufferedImage("/img/playButton.png", 4)
-        val pauseIcon = imgFactory.createBufferedImage("/img/pauseButton.png", 4)
-        val stopIcon = imgFactory.createBufferedImage("/img/stopButton.png", 4)
-        //Creates an icon from the image and scales it according to the screen dimensions
-        val play = ImageIcon(pIcon.getScaledInstance((WIDTH * 0.085).toInt(), (WIDTH * 0.085).toInt(), 0))
-        val pause = ImageIcon(pauseIcon.getScaledInstance((WIDTH * 0.085).toInt(), (WIDTH * 0.085).toInt(), 0))
-        val stop = ImageIcon(stopIcon.getScaledInstance((WIDTH * 0.085).toInt(), (WIDTH * 0.085).toInt(), 0))
-
-        //Construct the RMS level meter (JProgressBar)
-        volume = JProgressBar(JProgressBar.VERTICAL, 0, 3000)
-        volume.setValue(0)
-        volume.setBounds(
-            (this.getBounds().getMaxX() - WIDTH * 0.1) as Int - 10, 5, (WIDTH * 0.1).toInt(),
-            this.getBounds().getHeight() as Int - 25
-        )
-        volume.setStringPainted(true)
-        volume.setForeground(jmuGold)
-        volume.setString("")
-        //Create a slider for the volume control
-        volumeSlider = JSlider(JSlider.VERTICAL, 0, 10, 5)
-        volumeSlider.addChangeListener(this)
-        volumeSlider.setMajorTickSpacing(1)
-        volumeSlider.setSnapToTicks(true)
-        volumeSlider.setPaintTicks(true)
-        volumeSlider.setPaintLabels(true)
-        volumeSlider.setFont(fontVolume)
-        volumeSlider.setBorder(LineBorder(jmuGold, 1, true))
-        volumeSlider.setBackground(jmuPurple)
-        volumeSlider.setBounds(
-            (volume.getBounds().getMinX() - (WIDTH * 0.15).toInt() - 10) as Int,
-            5, (WIDTH * 0.15).toInt(), this.getBounds().getHeight() as Int - 25
-        )
-        volumeSlider.setForeground(jmuGold)
-
-        //Create the file selector drop down box
-        files = buildDropDown()
-        files.setBounds(10, HEIGHT - 200, 200, 20)
-
-        /* Audio playback buttons */
-        playbutton = JToggleButton(play)
-        playbutton.setBounds(5, files.getBounds().getMaxY() as Int + 100, 60, 60)
-        playbutton.addActionListener(this)
-
-        pausebutton = JToggleButton(pause)
-        pausebutton.setBounds(65, files.getBounds().getMaxY() as Int + 100, 60, 60)
-        pausebutton.addActionListener(this)
-
-
-        stopbutton = JToggleButton(stop)
-        stopbutton.setBounds(125, files.getBounds().getMaxY() as Int + 100, 60, 60)
-        stopbutton.addActionListener(this)
-
-        //Create a label for the volume control
-        val volumeLabel = JLabel("Volume", SwingConstants.CENTER)
-        val rmsLabel = JLabel("RMS", SwingConstants.CENTER)
-        volumeLabel.setFont(font)
-        volumeLabel.setForeground(jmuGold)
-        volumeLabel.setBounds(
-            (volumeSlider.getBounds().getCenterX() - volumeLabel.getWidth() / 2) as Int - 25,
-            volumeSlider.getHeight() + 3, (WIDTH * 0.1).toInt(), 20
-        )
-
-        rmsLabel.setFont(font)
-        rmsLabel.setForeground(jmuGold)
-        rmsLabel.setBounds(
-            (volume.getBounds().getCenterX() - volume.getWidth() / 2) as Int,
-            volume.getHeight() + 3, (WIDTH * 0.1).toInt(), 20
-        )
-
-
-        //Initialize the sample player
         samplePlayerInit()
-
-        //Add all the components to the JPanel
-        add(volumeSlider)
-        add(volumeLabel)
-        add(rmsLabel)
-        add(files)
-        add(volume)
-        add(playbutton)
-        add(pausebutton)
-        add(stopbutton)
-
     }
 
     /**

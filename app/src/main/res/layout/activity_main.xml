@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <com.masteringVisualizations.FrequencyVizLayout
+        <masteringVisualizations.FrequencyVizLayout
                 android:id="@+id/visualization"
                 android:layout_width="match_parent"
                 android:layout_height="275dp"
@@ -20,7 +20,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/visualization"
                 />
-        </com.masteringVisualizations.FrequencyVizLayout>
+        </masteringVisualizations.FrequencyVizLayout>
 
         <RelativeLayout
                 android:id="@+id/eq_panel"
@@ -132,7 +132,7 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
+        <masteringVisualizations.AudioControlPanel
                 android:id="@+id/control_panel"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -162,14 +162,14 @@
                 android:layout_toEndOf="@id/play_button"
                 android:text="@string/pause"/>
 
-        <Button
-                android:id="@+id/stop_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@id/pause_button"
-                android:layout_toEndOf="@id/pause_button"
-                android:text="@string/stop"/>
+                <Button
+                        android:id="@+id/stop_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_toRightOf="@id/pause_button"
+                        android:layout_toEndOf="@id/pause_button"
+                        android:text="@string/stop" android:layout_alignTop="@+id/control_panel"/>
 
         <ProgressBar
                 android:id="@+id/rms_bar"
@@ -182,5 +182,5 @@
                 android:layout_marginLeft="18dp"
                 android:layout_marginStart="18dp"
                 android:layout_marginTop="15dp"/>
-        </RelativeLayout>
+        </masteringVisualizations.AudioControlPanel>
 </RelativeLayout>

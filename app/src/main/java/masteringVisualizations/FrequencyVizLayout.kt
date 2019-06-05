@@ -11,8 +11,6 @@ import android.view.View
 import com.example.audiovisualizer.R
 
 import net.beadsproject.beads.core.AudioContext
-import visual.VisualizationView
-import visual.described.Stage
 
 /**
  * Layout class for holding the Visualizaiton
@@ -38,6 +36,7 @@ class FrequencyVizLayout@JvmOverloads constructor(context: Context, attrs: Attri
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner.adapter = adapter
         }
+        setupSpinnerListener()
     }
 
     fun initVisualization(audioContext: AudioContext) {
