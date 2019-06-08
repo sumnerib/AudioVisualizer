@@ -2,21 +2,19 @@ package masteringVisualizations
 
 import android.content.Context
 import android.graphics.Color
-import android.media.MediaPlayer
+import android.graphics.PorterDuffColorFilter
+import android.graphics.PorterDuff
 import android.util.AttributeSet
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.RelativeLayout
-import java.io.IOException
 
-import io.ResourceFinder
 import com.example.audiovisualizer.R
 import net.beadsproject.beads.analysis.featureextractors.Power
 import net.beadsproject.beads.core.AudioContext
 import net.beadsproject.beads.data.Sample
-import net.beadsproject.beads.ugens.Gain
 import net.beadsproject.beads.ugens.RMS
 import net.beadsproject.beads.ugens.SamplePlayer
-import kotlinx.android.synthetic.main.activity_main.view.*
 
 
 /**
@@ -29,13 +27,12 @@ import kotlinx.android.synthetic.main.activity_main.view.*
 class AudioControlPanel@JvmOverloads constructor(context: Context, attrs: AttributeSet? = null,
                              defStyleAttr: Int = 0): RelativeLayout(context, attrs, defStyleAttr) {
 
-    private val finder: ResourceFinder    //A resource finder for getting audio files and images
 
-    //Colors used in the application
     private val jmuPurple = Color.argb(255, 69, 0, 132)
     private val jmuGold = Color.argb(255, 203, 182, 119)
     private val currVol: Int = 0
-    private val prevVol: Int = 0    //
+    private val prevVol: Int = 0
+    var rmsBar = findViewById<ProgressBar>(R.id.rms_bar)
 
     //These are from the Beads library
     /**
@@ -59,9 +56,8 @@ class AudioControlPanel@JvmOverloads constructor(context: Context, attrs: Attrib
 
     init {
         setBackgroundColor(jmuPurple)
-        //Get a resource finder instance and load the images for the play, pause and stop buttons
-        finder = ResourceFinder.createInstance(this)
         samplePlayerInit()
+        initListeners()
     }
 
     /**
@@ -74,14 +70,13 @@ class AudioControlPanel@JvmOverloads constructor(context: Context, attrs: Attrib
         var sample = Sample(resources.openRawResource(R.raw.Self_Driving))
 
         ac = AudioContext()                //Construct an AudioContext object
-        sp = SamplePlayer(ac!!, sample!!)        //Create a sampleplayer from the audio context and the sample as input
+        sp = SamplePlayer(ac, sample)        //Create a sampleplayer from the audio context and the sample as input
 
-        mainGain!!.addInput(sp)                //Chain the sample player to the input of the master gain
-        sp!!.killOnEnd = false                    //Do not kill the sample after playback gets to end of the sample
+        sp?.killOnEnd = false                    //Do not kill the sample after playback gets to end of the sample
 
         rms = RMS(ac, 2,1024)  //Create an RootMeanSquare object, with the audio context, channels and memory size
-        rms!!.addInput(ac!!.out)                    //Add the audio context as an input to the rms object
-        ac!!.out.addDependent(rms)                //Make the rms a dependant of the audio context gain
+        rms?.addInput(ac?.out)                    //Add the audio context as an input to the rms object
+        ac?.out?.addDependent(rms)                //Make the rms a dependant of the audio context gain
     }
 
     /**
@@ -90,67 +85,28 @@ class AudioControlPanel@JvmOverloads constructor(context: Context, attrs: Attrib
     private fun initListeners() {
 
         val play = findViewById<View>(R.id.play_button)
-        play.setOnClickListener(object : View.OnClickListener {
-            override  fun onClick(v: View) {
-                // Code here executes on main thread after user presses button
-            }
-        })
-        //Playbutton pressed
-        if (e.getSource().equals(playbutton)) {
-            //Make sure the audio context is not null and that the audio context is not currently running
-            if (ac != null && !ac!!.isRunning) {
-                ac!!.start()            //Start the audio context
-                //				currVol = volumeSlider.getValue();	//Store the current value of the volume slider
-                //				prevVol = currVol;		//Make the previous value of the volume slider the previous value
+        play.setOnClickListener {
+            if (!ac!!.isRunning) {
+                ac?.start()            //Start the audio context
                 updateRMS()            //Start the updateRMS method
-                stopbutton.setSelected(false)
-                pausebutton.setSelected(false)
             }
-
-        } else if (e.getSource().equals(pausebutton)) {
-            ac!!.stop()
-            playbutton.setSelected(false)
-            stopbutton.setSelected(false)
-
-        } else if (e.getSource().equals(stopbutton)) {
-            ac!!.stop()
-            sp!!.reset()
-            ac!!.reset()
-            volume.setValue(0)
-            playbutton.setSelected(false)
-            pausebutton.setSelected(false)
-
-            //Join the thread back up
-            try {
-                thread!!.join()
-                volume.setValue(0)
-
-            } catch (e1: InterruptedException) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace()
-            }
-
-        }//If the stop button is pressed, stop playback and reset the position to the beginning of the audio sample
-        //If the stop button is pressed then stop audio playback
-    }
-
-    /**
-     * stateChanged listens for changes in the volume slider control and adjust the
-     * gain of the audio context.
-     */
-    fun stateChanged(e: ChangeEvent) {
-
-        if (e.getSource().equals(volumeSlider)) {
-            //If the value of the slider is 0 then mute the audio
-            if (volumeSlider.getValue() === 0) {
-                ac!!.out.gain = 0.0f
-            } else {
-                ac!!.out.gain = 0.08f
-                mainGain!!.setGain(volumeSlider.getValue())
-
-            }//Otherwise set the gain to the value of the volumeSlider
         }
 
+        val pause = findViewById<View>(R.id.pause_button)
+        pause.setOnClickListener { ac?.stop() }
+
+        val stop = findViewById<View>(R.id.stop_button)
+        stop.setOnClickListener {
+            ac?.stop()
+            sp?.reset()
+            ac?.reset()
+            rmsBar.progress = 0
+            try {
+                thread?.join()
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     /**
@@ -159,67 +115,42 @@ class AudioControlPanel@JvmOverloads constructor(context: Context, attrs: Attrib
      * while loop.
      *
      */
-    fun updateRMS() {
-        //Construct a thread
+    private fun updateRMS() {
+
         thread = object : Thread() {
-            /**
-             * The run method executes the RMS audio signal update
-             * in a separate thread.
-             */
             override fun run() {
-                //Loop while the audio context is running
+
                 while (ac!!.isRunning) {
                     //Get the value of the rms and scale the float by 10000
                     val value = rms!!.value * 10000
                     //Update the volume progress bar with the rms value (synchronized access to it)
-                    synchronized(this) {
-                        volume.setValue(value.toInt())
-
-                    }
+                    synchronized(this) { rmsBar.progress = value.toInt() }
                     //If the rms level is above a certain threshold change the color
                     //to let the user know the signal is too loud
-                    if (value.toInt() >= 3000) {
-                        volume.setForeground(Color.RED)
-                    } else {
-                        volume.setForeground(jmuGold)
-                    }
-
+                    var colorFilter = PorterDuffColorFilter(jmuGold, PorterDuff.Mode.SRC_IN)
+                    if (value.toInt() >= 3000)
+                        colorFilter = PorterDuffColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
+                    rmsBar.progressDrawable.colorFilter = colorFilter
                 }
-
             }
-
         }
+
         thread!!.start()        //Start the thread to update the volume level.
-
-
     }
 
     /**
      * The resetControls method is called when the files drop down has focus,
      * and handles resetting filters and toggles off the playback buttons.
      */
-    fun resetControls() {
-        ac!!.stop()
-        sp!!.reset()
-
-        EQPanel.resetFilters()
-        EQPanel.resetPresets()
-        volume.setValue(0)
-        playbutton.setSelected(false)
-        pausebutton.setSelected(false)
-        stopbutton.setSelected(false)
-    }
-
-    companion object {
-        /**
-         *
-         */
-        private val serialVersionUID = 1L
-        /**
-         * Getter for the mastergain object
-         * @return A Gain object
-         */
-        var mainGain: Gain? = null
-            private set            //Gain object for controlling the gain of an audio signal
-    }
+//    fun resetControls() {
+//        ac!!.stop()
+//        sp!!.reset()
+//
+//        EQPanel.resetFilters()
+//        EQPanel.resetPresets()
+//        volume.setValue(0)
+//        playbutton.setSelected(false)
+//        pausebutton.setSelected(false)
+//        stopbutton.setSelected(false)
+//    }
 }
