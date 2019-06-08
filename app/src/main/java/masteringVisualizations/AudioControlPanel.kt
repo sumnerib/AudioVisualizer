@@ -2,11 +2,13 @@ package masteringVisualizations
 
 import android.content.Context
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.widget.RelativeLayout
 import java.io.IOException
 
 import io.ResourceFinder
+import com.example.audiovisualizer.R
 import net.beadsproject.beads.analysis.featureextractors.Power
 import net.beadsproject.beads.core.AudioContext
 import net.beadsproject.beads.data.Sample
@@ -64,6 +66,8 @@ class AudioControlPanel@JvmOverloads constructor(context: Context, attrs: Attrib
      * items needed for audio playback for Beads.
      */
     fun samplePlayerInit() {
+
+        var mediaPlayer = MediaPlayer.create(context, R.raw.Self_Driving)
         //Store the selected audio file name
         val audioFile = files.getSelectedItem().toString()
         //Get an inputstream using the resourcefinder and the audio file name
