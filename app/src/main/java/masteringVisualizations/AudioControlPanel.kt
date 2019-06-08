@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.media.MediaPlayer
 import android.util.AttributeSet
+import android.view.View
 import android.widget.RelativeLayout
 import java.io.IOException
 
@@ -15,6 +16,8 @@ import net.beadsproject.beads.data.Sample
 import net.beadsproject.beads.ugens.Gain
 import net.beadsproject.beads.ugens.RMS
 import net.beadsproject.beads.ugens.SamplePlayer
+import kotlinx.android.synthetic.main.activity_main.view.*
+
 
 /**
  * The AudioControlPanel builds the controls panel for audio playback and
@@ -65,90 +68,33 @@ class AudioControlPanel@JvmOverloads constructor(context: Context, attrs: Attrib
      * The samplePlayerInit method initializes all of the sample player
      * items needed for audio playback for Beads.
      */
-    fun samplePlayerInit() {
+    private fun samplePlayerInit() {
 
-        var mediaPlayer = MediaPlayer.create(context, R.raw.Self_Driving)
-        //Store the selected audio file name
-        val audioFile = files.getSelectedItem().toString()
-        //Get an inputstream using the resourcefinder and the audio file name
-        val sourceStream = finder.findInputStream("/audio/$audioFile")
-
-        var sample: Sample? = null
-        try {
-            sample = Sample(sourceStream)        //Create a sample from the inputstream
-
-        } catch (e1: IOException) {
-
-            println("could not find $audioFile")
-            e1.printStackTrace()
-        } catch (e: UnsupportedAudioFileException) {
-
-            e.printStackTrace()
-        }
-
+        //var mediaPlayer = MediaPlayer.create(context, R.raw.Self_Driving)
+        var sample = Sample(resources.openRawResource(R.raw.Self_Driving))
 
         ac = AudioContext()                //Construct an AudioContext object
         sp = SamplePlayer(ac!!, sample!!)        //Create a sampleplayer from the audio context and the sample as input
 
-
-        mainGain = Gain(ac, 1, 0.0f)        //Create a gain object for the master gain of the audio context
-
         mainGain!!.addInput(sp)                //Chain the sample player to the input of the master gain
-        ac!!.out.addInput(mainGain)            //Add the gain object as an input to the gain of the audio context
-        ac!!.out.gain = 0.06f                    //Set the initial gain of the audio context.
-        mainGain!!.setGain(volumeSlider.getValue())        //set mastergain by getting the value from the slider
         sp!!.killOnEnd = false                    //Do not kill the sample after playback gets to end of the sample
 
-        rms = RMS(
-            ac,
-            2,
-            1024
-        )                //Create an RootMeanSquare object, with the audio context, channels and memory size
+        rms = RMS(ac, 2,1024)  //Create an RootMeanSquare object, with the audio context, channels and memory size
         rms!!.addInput(ac!!.out)                    //Add the audio context as an input to the rms object
         ac!!.out.addDependent(rms)                //Make the rms a dependant of the audio context gain
     }
 
     /**
-     * The buildDropDown method builds the file selector drop down box and returns it.
-     * @return  JComboBox The combo box of the audio files list
-     */
-    fun buildDropDown(): JComboBox<String> {
-        val audioFiles =
-            arrayOf("veilofshadows.au", "orchpiece_2.au", "underminers-drumloop.au", "veilofshadows-outro.au")
-
-        val fileSelect = JComboBox<String>(audioFiles)
-        fileSelect.addActionListener(this)
-        return fileSelect
-
-    }
-
-
-    /**
      * Performs actions based on button clicks
      */
-    fun actionPerformed(e: ActionEvent) {
-        //Whenever any button is clicked, get the selected audio file in the dropdown box.
-        val audioFile = files.getSelectedItem().toString()
-        //Get an input stream of the audio sample
-        val sourceStream = finder.findInputStream("/audio/$audioFile")
+    private fun initListeners() {
 
-
-        var sample: Sample? = null
-        try {
-            sample = Sample(sourceStream)        //Create a sample from the audio file
-        } catch (e1: IOException) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace()
-        } catch (e2: UnsupportedAudioFileException) {
-            e2.printStackTrace()
-        }
-
-        //If the files drop down box has focus, reset all of the audio playback and filters
-        if (files.hasFocus()) {
-            resetControls()
-            sp!!.sample = sample!!
-        }
-
+        val play = findViewById<View>(R.id.play_button)
+        play.setOnClickListener(object : View.OnClickListener {
+            override  fun onClick(v: View) {
+                // Code here executes on main thread after user presses button
+            }
+        })
         //Playbutton pressed
         if (e.getSource().equals(playbutton)) {
             //Make sure the audio context is not null and that the audio context is not currently running
